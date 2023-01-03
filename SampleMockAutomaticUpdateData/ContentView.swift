@@ -8,20 +8,65 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var model: GameModel
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        ZStack {
+            Color.gray
+            VStack(spacing: 12) {
+                HStack {
+                    // Home Team
+                    HStack(spacing: 20) {
+                        Text("\(model.gameState.homeScore)")
+                            .font(.system(size:38, weight: .bold))
+                    }
+                    Spacer()
+                    HStack(spacing: 20) {
+                        Text("\(model.gameState.awayScore)")
+                            .font(.system(size: 38, weight: .bold))
+                    }
+                }
+                .padding(20)
+                // Last Scored
+                HStack(spacing: 20) {
+                    Text(model.gameState.lastAction)
+                    
+                }
+                .font(.callout)
+                .padding(.bottom, 40)
+                // Buttons
+                VStack(spacing: 12) {
+                    Button("Start Game Sim") {
+                        model.simulator.start()
+                    }
+                    .buttonStyle(ActionButton())
+                    Button("End Sim & Live Activity") {
+                        model.simulator.end()
+                    }
+                    .buttonStyle(ActionButton(color: .pink))
+                }
+            }
+
         }
-        .padding()
+    }
+}
+
+struct ActionButton: ButtonStyle {
+    var color: Color = .blue
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .frame(width: 260, height: 44)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            .opacity(configuration.isPressed ? 0.75 : 1.0)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(model: GameModel())
     }
 }
 
@@ -174,3 +219,4 @@ final class GameModel: ObservableObject, GameSimulatorDelegate {
     func didCompleteGame() {
     }
 }
+
